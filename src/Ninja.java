@@ -3,7 +3,7 @@ public class Ninja extends Player {
 
 	public Ninja(double x, double y, double width, double height, double xSpd, double ySpd) {
 		super(x, y, width, height, xSpd, ySpd);
-		health = 3;
+		health = 6;
 		
 		addImagesCustomDimensions("NinjaIdle (1).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH), (int) DD.NINJASPRITEHEIGHT);
 		addImagesCustomDimensions("NinjaIdle (2).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);

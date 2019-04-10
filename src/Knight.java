@@ -1,6 +1,14 @@
 
 public class Knight extends Player {
 
+	public static final int CHARGE_DURATION = 2000;
+	public static final int CHARGE_CD = 5000;
+	
+	private long chargeStartTime;
+	private boolean charging;
+	private boolean chargeOnCD;
+	
+	
 	public Knight(double x, double y, double width, double height, double xSpd, double ySpd) {
 		super(x, y, width, height, xSpd, ySpd);
 		health = 24;
@@ -139,4 +147,29 @@ public class Knight extends Player {
 		addImages("DeadLeft (10).png", deadLeftSprites, cldr);
 	}
 
+	public boolean isCharging() {
+		return charging;
+	}
+
+	public void setCharging(boolean charging) {
+		this.charging = charging;
+	}
+
+	public long getChargeStartTime() {
+		return chargeStartTime;
+	}
+
+	public void setChargeStartTime(long chargeStartTime) {
+		this.chargeStartTime = chargeStartTime;
+	}
+
+	public boolean isChargeOnCD() {
+		return chargeOnCD;
+	}
+
+	public void setChargeOnCD(boolean chargeOnCD) {
+		this.chargeOnCD = chargeOnCD;
+	}
+
+	
 }

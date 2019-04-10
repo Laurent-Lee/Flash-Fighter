@@ -89,7 +89,7 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 		player1Animator.start();
 
 		if (numberOfPlayers >= 2) {
-			plyr2 = new Ninja(DD.XSPAWN2, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
+			plyr2 = new Knight(DD.XSPAWN2, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
 			playerList.add(plyr2);
 			plyr2Hp = new PlayerHpBar(plyr2, (int) DD.PLAYER2HEARTX, (int) DD.FONTSIZE);
 			playerHpList.add(plyr2Hp);
@@ -216,6 +216,49 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 		}
 	}
 
+	public void updateCharge(Knight knight) {
+		if(knight.isCharging()) {
+
+			if(knight.getSpriteDirection() == 0) {
+				if (!knight.isDead()) {
+					if (!knight.isAttacking()) {
+						knight.setIntentRightMovement(true);
+						knight.setIntentLeftMovement(false);
+						knight.setSpriteDirection(0);
+						if (!knight.isRightBlock()) {
+							knight.setMyXSpeed(DD.CHARGEXSPD);
+							knight.setCurrentHorizontalDirection(2);
+							if (knight.getMyX() > DD.SCREENWIDTH - (DD.XBORDER + DD.PLYRWIDTH))
+								knight.setMyXSpeed(0);
+						}
+					}
+				}
+			} else if (knight.getSpriteDirection() == 1) {
+				if (!knight.isDead()) {
+					if (!knight.isAttacking()) {
+						knight.setIntentLeftMovement(true);
+						knight.setIntentRightMovement(false);
+						knight.setSpriteDirection(1);
+						if (!knight.isLeftBlock()) {
+							knight.setMyXSpeed(-DD.CHARGEXSPD);
+							knight.setCurrentHorizontalDirection(1);
+							if (knight.getMyX() < DD.XBORDER)
+								knight.setMyXSpeed(0);
+						}
+					}
+				}
+			}
+			if(System.currentTimeMillis() - knight.getChargeStartTime() > Knight.CHARGE_DURATION) {
+				knight.setCharging(false);
+			}
+		}
+		if(knight.isChargeOnCD()) {
+			if(System.currentTimeMillis() - knight.getChargeStartTime() > Knight.CHARGE_CD) {
+				knight.setChargeOnCD(false);
+			}
+		}
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if (!paused) {
 			removeAll();
@@ -225,6 +268,10 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 			interactWithPlayers(plyr, playerList);
 			checkIfDead(plyr, player1Animator);
 
+			if(plyr instanceof Knight) {
+				updateCharge((Knight) plyr);
+			}
+			
 			updateThrowingStars(plyr1Stars, map, playerList);
 
 			if (numberOfPlayers >= 2) {
@@ -233,6 +280,10 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 				updateSpriteSettings(plyr2, player2Animator);
 				interactWithPlayers(plyr2, playerList);
 				checkIfDead(plyr2, player2Animator);
+				
+				if(plyr2 instanceof Knight) {
+					updateCharge((Knight) plyr2);
+				}
 
 				updateThrowingStars(plyr2Stars, map, playerList);
 			}
@@ -242,6 +293,10 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 				updateSpriteSettings(plyr3, player3Animator);
 				interactWithPlayers(plyr3, playerList);
 				checkIfDead(plyr3, player3Animator);
+				
+				if(plyr3 instanceof Knight) {
+					updateCharge((Knight) plyr3);
+				}
 
 				updateThrowingStars(plyr3Stars, map, playerList);
 			}
@@ -252,6 +307,10 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 				interactWithPlayers(plyr4, playerList);
 				checkIfDead(plyr4, player4Animator);
 
+				if(plyr4 instanceof Knight) {
+					updateCharge((Knight) plyr4);
+				}
+				
 				updateThrowingStars(plyr4Stars, map, playerList);
 			}
 			updatePlayerBlocks(plyr, map);
@@ -636,10 +695,15 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 		} else if (key == codeSpecial) {
 			if (!plyr.isDead()) {
 				if (plyr instanceof Ninja) {
+					plyr = (Ninja) plyr;
 					plyrStars.add(new ThrowingStar(plyr));
+					
 				}
-				else if(plyr instanceof Knight) {
-					//plyr.setCharging(true);
+				else if(plyr instanceof Knight && !((Knight) plyr).isChargeOnCD()) {
+					Knight knight = (Knight) plyr;
+					knight.setCharging(true);
+					knight.setChargeStartTime(System.currentTimeMillis());
+					knight.setChargeOnCD(true);		
 				}
 			}
 		}

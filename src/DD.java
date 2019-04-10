@@ -14,6 +14,7 @@ public class DD {
 	public static final double YBOTBORDER = screenSize.getHeight()*.015;
 	
 	public static final double PLYRXSPD = screenSize.getWidth()*.0015;
+	public static final double CHARGEXSPD = 2*PLYRXSPD;
 			
 	public static final double BOUNCESPEED = screenSize.getHeight()*.0003;
 	public static final double JUMPHEIGHT = -SCREENHEIGHT*.005; 
