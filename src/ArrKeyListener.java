@@ -76,7 +76,7 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 		playerList = new ArrayList<Player>();
 		playerHpList = new ArrayList<PlayerHpBar>();
 
-		plyr = new Player(DD.XSPAWN, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0, 1);
+		plyr = new Ninja(DD.XSPAWN, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
 		playerList.add(plyr);
 
 		plyrHp = new PlayerHpBar(plyr, 0, (int) DD.FONTSIZE);
@@ -89,7 +89,7 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 		player1Animator.start();
 
 		if (numberOfPlayers >= 2) {
-			plyr2 = new Player(DD.XSPAWN2, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0, 1);
+			plyr2 = new Ninja(DD.XSPAWN2, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
 			playerList.add(plyr2);
 			plyr2Hp = new PlayerHpBar(plyr2, (int) DD.PLAYER2HEARTX, (int) DD.FONTSIZE);
 			playerHpList.add(plyr2Hp);
@@ -99,7 +99,7 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 			player2Animator.start();
 		}
 		if (numberOfPlayers >= 3) {
-			plyr3 = new Player(DD.XSPAWN3, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0, 1);
+			plyr3 = new Knight(DD.XSPAWN3, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
 			playerList.add(plyr3);
 			plyr3Hp = new PlayerHpBar(plyr3, (int) DD.PLAYER3HEARTX, (int) DD.FONTSIZE);
 			playerHpList.add(plyr3Hp);
@@ -109,7 +109,7 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 			player3Animator.start();
 		}
 		if (numberOfPlayers >= 4) {
-			plyr4 = new Player(DD.XSPAWN4, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0, 1);
+			plyr4 = new Knight(DD.XSPAWN4, DD.YSPAWN, DD.PLYRWIDTH, DD.PLYRHEIGHT, 0, 0);
 			playerList.add(plyr4);
 			plyr4Hp = new PlayerHpBar(plyr4, (int) DD.PLAYER4HEARTX, (int) DD.FONTSIZE);
 			playerHpList.add(plyr4Hp);
@@ -635,10 +635,10 @@ public class ArrKeyListener extends JPanel implements KeyListener, ActionListene
 			}
 		} else if (key == codeSpecial) {
 			if (!plyr.isDead()) {
-				if (plyr.getCharacterType() == 1) {
+				if (plyr instanceof Ninja) {
 					plyrStars.add(new ThrowingStar(plyr));
 				}
-				else if(plyr.getCharacterType() == 0) {
+				else if(plyr instanceof Knight) {
 					//plyr.setCharging(true);
 				}
 			}

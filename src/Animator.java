@@ -25,7 +25,6 @@ public class Animator {
 	public Animator(ArrayList<Image> f, Player plyr) {
 		frames = f;
 		delay = (int) DD.SPRITEDELAYTIME;
-		playerType = plyr.getCharacterType();
 	}
 
 	public void setDelay(long d) {

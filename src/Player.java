@@ -8,59 +8,52 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-public class Player extends Item {
-	public static final int KNIGHT_TYPE = 0;
-	public static final int NINJA_TYPE = 1;
+public abstract class Player extends Item {
 	
-	private int availableJumps;
-	private int currentHorizontalDirection; // 0 = not moving, 1 = left, 2 = right
-	private int currentVerticalDirection;// 0 = not moving, 1 = up, 2 = down
-	private boolean intentRightMovement;
-	private boolean intentLeftMovement;
-	private boolean intentToUncrouch;
-	private boolean heldDownKey;
-	private boolean inAir;
-	private boolean upBlock; // records how many items are blocking the player in the respective direction
-	private boolean downBlock;
-	private boolean leftBlock;
-	private boolean rightBlock;
-	private boolean verticalContact;
-	private boolean horizontalContact;
-	private ArrayList<Image> idleSprites;
-	private ArrayList<Image> runSprites;
-	private ArrayList<Image> jumpSprites;
-	private ArrayList<Image> idleLeftSprites;
-	private ArrayList<Image> runLeftSprites;
-	private ArrayList<Image> jumpLeftSprites;
-	private ArrayList<Image> attackSprites;
-	private ArrayList<Image> attackLeftSprites;
-	private ArrayList<Image> jumpAttackSprites;
-	private ArrayList<Image> jumpAttackLeftSprites;
-	private ArrayList<Image> deadSprites;
-	private ArrayList<Image> deadLeftSprites;
-	private int spriteDirection; // 0 = right, 1 = left
-	private boolean attacking;
-	private boolean attackHit;
-	private boolean jumpAttacking;
-	private long attackStartTime;
+	protected int availableJumps;
+	protected int currentHorizontalDirection; // 0 = not moving, 1 = left, 2 = right
+	protected int currentVerticalDirection;// 0 = not moving, 1 = up, 2 = down
+	protected boolean intentRightMovement;
+	protected boolean intentLeftMovement;
+	protected boolean intentToUncrouch;
+	protected boolean heldDownKey;
+	protected boolean inAir;
+	protected boolean upBlock; // records how many items are blocking the player in the respective direction
+	protected boolean downBlock;
+	protected boolean leftBlock;
+	protected boolean rightBlock;
+	protected boolean verticalContact;
+	protected boolean horizontalContact;
+	protected ArrayList<Image> idleSprites;
+	protected ArrayList<Image> runSprites;
+	protected ArrayList<Image> jumpSprites;
+	protected ArrayList<Image> idleLeftSprites;
+	protected ArrayList<Image> runLeftSprites;
+	protected ArrayList<Image> jumpLeftSprites;
+	protected ArrayList<Image> attackSprites;
+	protected ArrayList<Image> attackLeftSprites;
+	protected ArrayList<Image> jumpAttackSprites;
+	protected ArrayList<Image> jumpAttackLeftSprites;
+	protected ArrayList<Image> deadSprites;
+	protected ArrayList<Image> deadLeftSprites;
+	protected int spriteDirection; // 0 = right, 1 = left
+	protected boolean attacking;
+	protected boolean attackHit;
+	protected boolean jumpAttacking;
+	protected long attackStartTime;
 	
-	boolean charging;
+	protected double deadX, deadY, deadWidth, deadHeight;
+	protected long deadUpdateTime;
 
-	private int characterType; // 0 = knight, 1 = ninja..
+	protected int health;
+	protected boolean dead;
 
-	private double deadX, deadY, deadWidth, deadHeight;
-	private long deadUpdateTime;
+	protected ImageIcon playerImageIcon;
+	protected Image playerImage;
+	protected ClassLoader cldr;
 
-	private int health;
-	private boolean dead;
-
-	private ImageIcon playerImageIcon;
-	private Image playerImage;
-
-	public Player(double x, double y, double width, double height, double xSpd, double ySpd, int charType) {
+	public Player(double x, double y, double width, double height, double xSpd, double ySpd) {
 		super(x, y, width, height, xSpd, ySpd);
-
-		characterType = charType;
 		
 		availableJumps = 2;
 
@@ -78,283 +71,9 @@ public class Player extends Item {
 		jumpAttackLeftSprites = new ArrayList<Image>();
 		deadLeftSprites = new ArrayList<Image>();
 
-		ClassLoader cldr = this.getClass().getClassLoader();
-
-		if (characterType == 0) {
-			health = 24;
-			
-			// https://www.gameart2d.com/the-knight-free-sprites.html
-			addImages("Idle (1).png", idleSprites, cldr);
-			addImages("Idle (2).png", idleSprites, cldr);
-			addImages("Idle (3).png", idleSprites, cldr);
-			addImages("Idle (4).png", idleSprites, cldr);
-			addImages("Idle (5).png", idleSprites, cldr);
-			addImages("Idle (6).png", idleSprites, cldr);
-			addImages("Idle (7).png", idleSprites, cldr);
-			addImages("Idle (8).png", idleSprites, cldr);
-			addImages("Idle (9).png", idleSprites, cldr);
-			addImages("Idle (10).png", idleSprites, cldr);
-
-			addImages("IdleLeft (1).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (2).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (3).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (4).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (5).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (6).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (7).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (8).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (9).png", idleLeftSprites, cldr);
-			addImages("IdleLeft (10).png", idleLeftSprites, cldr);
-
-			addImages("Run (1).png", runSprites, cldr);
-			addImages("Run (2).png", runSprites, cldr);
-			addImages("Run (3).png", runSprites, cldr);
-			addImages("Run (4).png", runSprites, cldr);
-			addImages("Run (5).png", runSprites, cldr);
-			addImages("Run (6).png", runSprites, cldr);
-			addImages("Run (7).png", runSprites, cldr);
-			addImages("Run (8).png", runSprites, cldr);
-			addImages("Run (9).png", runSprites, cldr);
-			addImages("Run (10).png", runSprites, cldr);
-
-			addImages("RunLeft (1).png", runLeftSprites, cldr);
-			addImages("RunLeft (2).png", runLeftSprites, cldr);
-			addImages("RunLeft (3).png", runLeftSprites, cldr);
-			addImages("RunLeft (4).png", runLeftSprites, cldr);
-			addImages("RunLeft (5).png", runLeftSprites, cldr);
-			addImages("RunLeft (6).png", runLeftSprites, cldr);
-			addImages("RunLeft (7).png", runLeftSprites, cldr);
-			addImages("RunLeft (8).png", runLeftSprites, cldr);
-			addImages("RunLeft (9).png", runLeftSprites, cldr);
-			addImages("RunLeft (10).png", runLeftSprites, cldr);
-
-			addImages("Jump (1).png", jumpSprites, cldr);
-			addImages("Jump (2).png", jumpSprites, cldr);
-			addImages("Jump (3).png", jumpSprites, cldr);
-			addImages("Jump (4).png", jumpSprites, cldr);
-			addImages("Jump (5).png", jumpSprites, cldr);
-			addImages("Jump (6).png", jumpSprites, cldr);
-			addImages("Jump (7).png", jumpSprites, cldr);
-			addImages("Jump (8).png", jumpSprites, cldr);
-			addImages("Jump (9).png", jumpSprites, cldr);
-			addImages("Jump (10).png", jumpSprites, cldr);
-
-			addImages("JumpLeft (1).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (2).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (3).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (4).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (5).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (6).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (7).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (8).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (9).png", jumpLeftSprites, cldr);
-			addImages("JumpLeft (10).png", jumpLeftSprites, cldr);
-
-			addImages("Attack (1).png", attackSprites, cldr);
-			addImages("Attack (2).png", attackSprites, cldr);
-			addImages("Attack (3).png", attackSprites, cldr);
-			addImages("Attack (4).png", attackSprites, cldr);
-			addImages("Attack (5).png", attackSprites, cldr);
-			addImages("Attack (6).png", attackSprites, cldr);
-			addImages("Attack (7).png", attackSprites, cldr);
-			addImages("Attack (8).png", attackSprites, cldr);
-			addImages("Attack (9).png", attackSprites, cldr);
-			addImages("Attack (10).png", attackSprites, cldr);
-
-			addImages("AttackLeft (1).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (2).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (3).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (4).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (5).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (6).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (7).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (8).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (9).png", attackLeftSprites, cldr);
-			addImages("AttackLeft (10).png", attackLeftSprites, cldr);
-
-			addImages("JumpAttack (1).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (2).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (3).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (4).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (5).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (6).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (7).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (8).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (9).png", jumpAttackSprites, cldr);
-			addImages("JumpAttack (10).png", jumpAttackSprites, cldr);
-
-			addImages("jumpAttackLeft (1).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (2).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (3).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (4).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (5).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (6).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (7).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (8).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (9).png", jumpAttackLeftSprites, cldr);
-			addImages("jumpAttackLeft (10).png", jumpAttackLeftSprites, cldr);
-
-			addImages("Dead (1).png", deadSprites, cldr);
-			addImages("Dead (2).png", deadSprites, cldr);
-			addImages("Dead (3).png", deadSprites, cldr);
-			addImages("Dead (4).png", deadSprites, cldr);
-			addImages("Dead (5).png", deadSprites, cldr);
-			addImages("Dead (6).png", deadSprites, cldr);
-			addImages("Dead (7).png", deadSprites, cldr);
-			addImages("Dead (8).png", deadSprites, cldr);
-			addImages("Dead (9).png", deadSprites, cldr);
-			addImages("Dead (10).png", deadSprites, cldr);
-
-			addImages("DeadLeft (1).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (2).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (3).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (4).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (5).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (6).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (7).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (8).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (9).png", deadLeftSprites, cldr);
-			addImages("DeadLeft (10).png", deadLeftSprites, cldr);
-		}
-
-		else if (characterType == 1) {
-			
-			health = 3;
-			
-			addImagesCustomDimensions("NinjaIdle (1).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (2).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (3).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (4).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (5).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (6).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (7).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (8).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (9).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdle (10).png", idleSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-
-			addImagesCustomDimensions("NinjaIdleLeft (1).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (2).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (3).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (4).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (5).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (6).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (7).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (8).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (9).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaIdleLeft (10).png", idleLeftSprites, cldr, (int) (DD.NINJAIDLESPRITEWIDTH ), (int) DD.NINJASPRITEHEIGHT);
-
-			addImages("NinjaRun (1).png", runSprites, cldr);
-			addImages("NinjaRun (2).png", runSprites, cldr);
-			addImages("NinjaRun (3).png", runSprites, cldr);
-			addImages("NinjaRun (4).png", runSprites, cldr);
-			addImages("NinjaRun (5).png", runSprites, cldr);
-			addImages("NinjaRun (6).png", runSprites, cldr);
-			addImages("NinjaRun (7).png", runSprites, cldr);
-			addImages("NinjaRun (8).png", runSprites, cldr);
-			addImages("NinjaRun (9).png", runSprites, cldr);
-			addImages("NinjaRun (10).png", runSprites, cldr);
-
-			addImages("NinjaRunLeft (1).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (2).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (3).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (4).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (5).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (6).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (7).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (8).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (9).png", runLeftSprites, cldr);
-			addImages("NinjaRunLeft (10).png", runLeftSprites, cldr);
-
-			addImages("NinjaJump (1).png", jumpSprites, cldr);
-			addImages("NinjaJump (2).png", jumpSprites, cldr);
-			addImages("NinjaJump (3).png", jumpSprites, cldr);
-			addImages("NinjaJump (4).png", jumpSprites, cldr);
-			addImages("NinjaJump (5).png", jumpSprites, cldr);
-			addImages("NinjaJump (6).png", jumpSprites, cldr);
-			addImages("NinjaJump (7).png", jumpSprites, cldr);
-			addImages("NinjaJump (8).png", jumpSprites, cldr);
-			addImages("NinjaJump (9).png", jumpSprites, cldr);
-			addImages("NinjaJump (10).png", jumpSprites, cldr);
-			
-			addImages("NinjaJumpLeft (1).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (2).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (3).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (4).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (5).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (6).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (7).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (8).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (9).png", jumpLeftSprites, cldr);
-			addImages("NinjaJumpLeft (10).png", jumpLeftSprites, cldr);
-
-			addImagesCustomDimensions("NinjaAttack (1).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaAttack (2).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (3).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (4).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (5).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (6).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (7).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (8).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (9).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttack (10).png", attackSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-
-			addImagesCustomDimensions("NinjaAttackLeft (1).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaAttackLeft (2).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (3).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (4).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (5).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (6).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (7).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (8).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (9).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
-			addImagesCustomDimensions("NinjaAttackLeft (10).png", attackLeftSprites, cldr, (int) (DD.NINJAATTACKSPRITEWIDTH), (int) DD.NINJAATTACKSPRITEHEIGHT);
+		cldr = this.getClass().getClassLoader();
 
 
-			addImagesCustomDimensions("NinjaJumpAttack (1).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (2).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (3).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (4).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (5).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (6).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (7).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (8).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (9).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttack (10).png", jumpAttackSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-
-			addImagesCustomDimensions("NinjaJumpAttackLeft (1).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (2).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (3).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (4).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (5).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (6).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (7).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (8).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (9).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-			addImagesCustomDimensions("NinjaJumpAttackLeft (10).png", jumpAttackLeftSprites, cldr, (int) (DD.NINJAJUMPATTACKSPRITEWIDTH), (int) (DD.NINJAATTACKSPRITEHEIGHT));
-
-
-			addImages("NinjaDead (1).png", deadSprites, cldr);
-			addImages("NinjaDead (2).png", deadSprites, cldr);
-			addImages("NinjaDead (3).png", deadSprites, cldr);
-			addImages("NinjaDead (4).png", deadSprites, cldr);
-			addImages("NinjaDead (5).png", deadSprites, cldr);
-			addImages("NinjaDead (6).png", deadSprites, cldr);
-			addImages("NinjaDead (7).png", deadSprites, cldr);
-			addImages("NinjaDead (8).png", deadSprites, cldr);
-			addImages("NinjaDead (9).png", deadSprites, cldr);
-			addImages("NinjaDead (10).png", deadSprites, cldr);
-
-			addImages("NinjaDeadLeft (1).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (2).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (3).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (4).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (5).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (6).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (7).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (8).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (9).png", deadLeftSprites, cldr);
-			addImages("NinjaDeadLeft (10).png", deadLeftSprites, cldr);
-		}
 	}
 
 	public void addImages(String name, ArrayList<Image> sprites, ClassLoader cldr) {
@@ -858,12 +577,5 @@ public class Player extends Item {
 		this.deadLeftSprites = deadLeftSprites;
 	}
 
-	public int getCharacterType() {
-		return characterType;
-	}
-
-	public void setCharacterType(int characterType) {
-		this.characterType = characterType;
-	}
 
 }
